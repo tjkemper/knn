@@ -35,12 +35,20 @@ class KDTree:
         axis = depth % self.num_dims
 
         point_sorted_list = sorted(point_list, key=lambda point: point[axis])
-        mid = int(len(point_sorted_list) / 2)
+        median = len(point_sorted_list) // 2
+        median_value = point_sorted_list[median][axis]
+
+        # Ensure points with same axis value are moved to the right side of the tree.
+        # This violates the halveness property, but allows simple (efficient?) knn search.
+        split_index = median
+        while split_index >= 1 and point_sorted_list[split_index - 1][axis] == median_value:
+            split_index -= 1
+        split_point = point_sorted_list[split_index]
 
         node = Node()
-        node.data = point_sorted_list[mid]
-        node.left = self._build(point_sorted_list[:mid], depth + 1, node)
-        node.right = self._build(point_sorted_list[mid+1:], depth + 1, node)
+        node.data = split_point
+        node.left = self._build(point_sorted_list[:split_index], depth + 1, node)
+        node.right = self._build(point_sorted_list[split_index + 1:], depth + 1, node)
         node.parent = parent
         node.axis = axis
         node.depth = depth
