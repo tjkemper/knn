@@ -1,4 +1,6 @@
 
+import math
+
 class Node:
     def __init__(self, data=None, left=None, right=None, parent=None, axis=None, depth=None):
         self.data = data
@@ -7,7 +9,7 @@ class Node:
         self.parent = parent
         self.axis = axis
         self.depth = depth
-    
+
     def __str__(self, level=0):
         string = "\t" * level + str(self.data) + "\n"
         if self.left:
@@ -54,15 +56,81 @@ class KDTree:
         node.depth = depth
         return node
 
-    # Todo: implement
-    def knn(self, k): 
-        pass
+    def knn(self, point, k):
+        # k_best = [[point, dist], [point, dist], ...]
+        k_best = []
+        self._knn_helper(self.root, point, k, k_best)
+        return k_best
+
+    def _knn_helper(self, curr_node, point, k, k_best):
+        if not curr_node:
+            return
+
+        # Recurse
+        recurse_right = True
+        if point[curr_node.axis] >= curr_node.data[curr_node.axis]:
+            self._knn_helper(curr_node.right, point, k, k_best)
+        elif point[curr_node.axis] < curr_node.data[curr_node.axis]:
+            recurse_right = False
+            self._knn_helper(curr_node.left, point, k, k_best)
+        else:
+            print("knn: Should never reach this point.")
+
+        curr_dist = kd_dist(curr_node.data, point)
+        if len(k_best) < k or curr_dist < k_best[-1][1]:
+            self._knn_insort(k_best, [curr_node.data, curr_dist])
+        
+        if len(k_best) > k:
+            k_best.pop()
+
+        # Check if distance to splitting plane is less than the worst k_best distance.
+        # If so, there could be closer neighbors in that subtree.
+        worst_k_best_dist = k_best[-1][1]
+        dist_to_splitting_plane = abs(curr_node.data[curr_node.axis] - point[curr_node.axis])
+
+        if len(k_best) < k or dist_to_splitting_plane < worst_k_best_dist:
+            node_to_check = curr_node.left if recurse_right else curr_node.right
+            self._knn_helper(node_to_check, point, k, k_best)
+        
+    def _knn_insort(self, point_dist_list, point_dist):
+        lo, hi = 0, len(point_dist_list)
+
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if point_dist[1] >= point_dist_list[mid][1]:
+                lo = mid + 1
+            else:
+                hi = mid
+        point_dist_list.insert(lo, point_dist)
+
 
     # Todo: implement w/ balance invariant
+    # https://en.wikipedia.org/wiki/K-d_tree#Balancing
     def add(self, point):
         pass
     def remove(self, point):
         pass
+
+def kd_dist(point1, point2):
+    if len(point1) != len(point2):
+        raise ValueError("Points must have same number of dimensions.")
+    
+    result = 0
+    for i in range(len(point1)):
+        result += (point1[i] - point2[i]) ** 2
+
+    result = math.sqrt(result)
+    return result
+
+# TODO: delete if unused
+def kd_squared_dist(point1, point2):
+    if len(point1) != len(point2):
+        raise ValueError("Points must have same number of dimensions.")
+    
+    result = 0
+    for i in range(len(point1)):
+        result += (point1[i] - point2[i]) ** 2
+    return result
 
 if __name__ == "__main__":
     kdtree = KDTree([
@@ -83,3 +151,4 @@ if __name__ == "__main__":
         3)
 
     print(kdtree.root)
+    print(kdtree.knn([20, 20, 20], 2))
