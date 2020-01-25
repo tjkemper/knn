@@ -1,5 +1,8 @@
 
+import enum
 import math
+import test_data
+import visualize3d
 
 class Node:
     def __init__(self, data=None, left=None, right=None, parent=None, axis=None, depth=None):
@@ -21,6 +24,10 @@ class Node:
         else:
             string += "\t" * (level + 1) + "None" + "\n"
         return string
+
+class VisualType(enum.Enum):
+    textual=1
+    graphical=2
 
 # https://en.wikipedia.org/wiki/K-d_tree
 class KDTree:
@@ -103,13 +110,44 @@ class KDTree:
                 hi = mid
         point_dist_list.insert(lo, point_dist)
 
-
     # Todo: implement w/ balance invariant
     # https://en.wikipedia.org/wiki/K-d_tree#Balancing
     def add(self, point):
         pass
     def remove(self, point):
         pass
+
+    def visualize(self, visual_type=VisualType.textual):
+        if visual_type == VisualType.textual:
+            print(self.root)
+        elif visual_type == VisualType.graphical:
+            if self.num_dims < 1 or self.num_dims > 3:
+                raise ValueError("Dimensions must be 1, 2, or 3.")
+            
+            if self.num_dims == 1:
+                raise NotImplementedError("Insert 25 cents")
+            elif self.num_dims == 2:
+                raise NotImplementedError("Insert 25 cents")
+            elif self.num_dims == 3:
+                visualize3d.tree(self)
+
+        else:
+            raise ValueError("Invalid VisualType.")
+    
+    # TODO: Implement VisualType.textual
+    def visualize_knn(self, point, result, visual_type=VisualType.graphical):
+        if visual_type != VisualType.graphical:
+            raise ValueError("Only VisualType.graphical is supported.")
+
+        if self.num_dims < 1 or self.num_dims > 3:
+            raise ValueError("Dimensions must be 1, 2, or 3.")
+
+        if self.num_dims == 1:
+            raise NotImplementedError("Insert 25 cents")
+        elif self.num_dims == 2:
+            raise NotImplementedError("Insert 25 cents")
+        elif self.num_dims == 3:
+            visualize3d.knn(self, point, result)
 
 def kd_dist(point1, point2):
     if len(point1) != len(point2):
@@ -122,33 +160,12 @@ def kd_dist(point1, point2):
     result = math.sqrt(result)
     return result
 
-# TODO: delete if unused
-def kd_squared_dist(point1, point2):
-    if len(point1) != len(point2):
-        raise ValueError("Points must have same number of dimensions.")
-    
-    result = 0
-    for i in range(len(point1)):
-        result += (point1[i] - point2[i]) ** 2
-    return result
-
 if __name__ == "__main__":
-    kdtree = KDTree([
-            [0, 0, 0],
-            [1, 1, 1],
-            [-5, -3, 3],
-            [-1, 5, -5],
-            [7, 7, 7],
-            [-4, -4, -4],
-            [2, 2, 2],
-            [8, 8, 8],
-            [-7, -7, -7],
-            [10, 10, 10],
-            [-9, -9, -9],
-            [-2, -2, -2],
-            [3, 3, 3],
-        ],
-        3)
+    tree = KDTree(test_data.list2, 3)
 
-    print(kdtree.root)
-    print(kdtree.knn([20, 20, 20], 2))
+    point = [5, 5, 4]
+    k = 7
+    result = tree.knn(point, k)
+
+    tree.visualize(visual_type=VisualType.graphical)
+    # tree.visualize_knn(point, result)
