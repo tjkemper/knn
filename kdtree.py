@@ -2,6 +2,7 @@
 import enum
 import math
 import test_data
+import visualize2d
 import visualize3d
 
 class Node:
@@ -127,7 +128,7 @@ class KDTree:
             if self.num_dims == 1:
                 raise NotImplementedError("Insert 25 cents")
             elif self.num_dims == 2:
-                raise NotImplementedError("Insert 25 cents")
+                visualize2d.tree(self)
             elif self.num_dims == 3:
                 visualize3d.tree(self)
 
@@ -145,7 +146,7 @@ class KDTree:
         if self.num_dims == 1:
             raise NotImplementedError("Insert 25 cents")
         elif self.num_dims == 2:
-            raise NotImplementedError("Insert 25 cents")
+            visualize2d.knn(self, point, result)
         elif self.num_dims == 3:
             visualize3d.knn(self, point, result)
 
@@ -161,11 +162,12 @@ def kd_dist(point1, point2):
     return result
 
 if __name__ == "__main__":
-    tree = KDTree(test_data.list2, 3)
+    num_dims = 3
+    tree = KDTree(test_data.rand_points(num_dims), num_dims)
 
-    point = [5, 5, 4]
+    point = test_data.rand_point(num_dims)
     k = 7
     result = tree.knn(point, k)
 
-    tree.visualize(visual_type=VisualType.graphical)
-    # tree.visualize_knn(point, result)
+    # tree.visualize(visual_type=VisualType.graphical)
+    tree.visualize_knn(point, result)

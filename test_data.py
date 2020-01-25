@@ -1,6 +1,6 @@
 from numpy.random import randint
 
-list1 = [
+list3d_1 = [
     [0, 0, 0],
     [5, 0, 0],
     [-5, 0, 0],
@@ -18,7 +18,7 @@ list1 = [
     [-5, -5, -5],
 ]
 
-list2 = [
+list3d_2 = [
     [0, 0, 0],
     [5, 1, 0],
     [-5, 2, 0],
@@ -36,7 +36,7 @@ list2 = [
     [-5, -5, -5],
 ]
 
-list3 = [
+list3d_3 = [
     [0, 0, 0],
     [1, 1, 1],
     [7, 7, 7],
@@ -46,7 +46,7 @@ list3 = [
     [-2, -2, -2],
 ]
 
-list4 = [
+list3d_4 = [
     [0, 0, 0],
     [1, 1, 1],
     [-5, -3, 3],
@@ -62,13 +62,29 @@ list4 = [
     [3, 3, 3],
 ]
 
-def rand(num_dims, num_points=30, lo=-10, hi=10):
+list2d_1 = [
+    [0, 0],
+    [5, 5],
+    [5, -5],
+    [-5, -5],
+    [-5, 5],
+]
+
+list2d_2 = [
+    [0, 0],
+    [5, 6],
+    [5, -6],
+    [-5, -5],
+    [-5, 5],
+]
+
+def rand_points(num_dims, num_points=30, lo=-10, hi=10):
     l = []
     for _ in range(num_points):
-        l.append(_rand_point(num_dims, lo, hi))
+        l.append(rand_point(num_dims, lo, hi))
     return l
 
-def _rand_point(num_dims, lo, hi):
+def rand_point(num_dims, lo=-10, hi=10):
     point = []
     for _ in range(num_dims):
         point.append(randint(lo, hi))

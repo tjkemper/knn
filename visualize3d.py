@@ -4,6 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib as mpl
 import kdtree
 import test_data
+import helper
 
 def knn(kdtree, point, result):
     ax = _setup()
@@ -77,7 +78,7 @@ def _plot_planes_helper(ax, node, num_dims):
     _plot_planes_helper(ax, node.right, num_dims)
 
 def _plot_plane(ax, node, num_dims, default_plane_width=10, num_samples=10):
-    boundaries = _boundaries(node)
+    boundaries = helper._boundaries(node, num_dims)
     boundaries = boundaries[node.axis:] + boundaries[:node.axis]
     
     child_dim = _dim_range(boundaries[1], default_plane_width, num_samples)
@@ -96,30 +97,12 @@ def _dim_range(boundary, default_plane_width, num_samples):
     end = boundary[1] if boundary[1] is not None else default_plane_width
     return np.linspace(beg, end, num_samples)
 
-def _boundaries(node):
-    boundaries = [[None, None], [None, None], [None, None]]
-    _boundaries_helper(node, node.parent, boundaries)
-    return boundaries
-
-def _boundaries_helper(node, ancestor, boundaries):
-    if not ancestor:
-        return
-    
-    if node.axis != ancestor.axis:
-        if node.data[ancestor.axis] >= ancestor.data[ancestor.axis]:
-            if boundaries[ancestor.axis][0] is None or ancestor.data[ancestor.axis] > boundaries[ancestor.axis][0]:
-                boundaries[ancestor.axis][0] = ancestor.data[ancestor.axis]
-        else:
-            if boundaries[ancestor.axis][1] is None or ancestor.data[ancestor.axis] < boundaries[ancestor.axis][1]:
-                boundaries[ancestor.axis][1] = ancestor.data[ancestor.axis]
-
-    _boundaries_helper(node, ancestor.parent, boundaries)
-
 if __name__ == "__main__":
 
-    tree = kdtree.KDTree(test_data.list4, 3)
+    num_dims = 3
+    tree = kdtree.KDTree(test_data.list3d_2, num_dims)
 
-    point = [5, 5, 4]
+    point = test_data.rand_point(num_dims)
     k = 7
     result = tree.knn(point, k)
 
