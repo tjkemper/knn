@@ -62,8 +62,14 @@ list4 = [
     [3, 3, 3],
 ]
 
-def rand(num_points=30, lo=-10, hi=10):
+def rand(num_dims, num_points=30, lo=-10, hi=10):
     l = []
     for _ in range(num_points):
-        l.append([randint(lo, hi), randint(lo, hi), randint(lo, hi)])
+        l.append(_rand_point(num_dims, lo, hi))
     return l
+
+def _rand_point(num_dims, lo, hi):
+    point = []
+    for _ in range(num_dims):
+        point.append(randint(lo, hi))
+    return point
