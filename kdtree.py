@@ -161,13 +161,25 @@ def kd_dist(point1, point2):
     result = math.sqrt(result)
     return result
 
-if __name__ == "__main__":
-    num_dims = 3
-    tree = KDTree(test_data.rand_points(num_dims), num_dims)
-
-    point = test_data.rand_point(num_dims)
-    k = 7
+def _example2d():
+    num_dims = 2
+    tree = KDTree(test_data.list2d_1, num_dims)
+    point = [1, 4]
+    k = 3
     result = tree.knn(point, k)
-
-    # tree.visualize(visual_type=VisualType.graphical)
+    tree.visualize(visual_type=VisualType.textual)
     tree.visualize_knn(point, result)
+
+def _example3d():
+    num_dims = 3
+    tree = KDTree(test_data.list3d_2, num_dims)
+    point = [7, -7, 7]
+    k = 2
+    result = tree.knn(point, k)
+    tree.visualize(visual_type=VisualType.graphical)
+    tree.visualize_knn(point, result)
+
+
+if __name__ == "__main__":
+    _example2d()
+    _example3d()
